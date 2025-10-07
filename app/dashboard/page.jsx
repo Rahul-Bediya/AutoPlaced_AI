@@ -1,126 +1,177 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Upload, Settings, BarChart3, FileText, NotebookPen, Briefcase, Rocket } from "lucide-react";
+import {
+  Upload,
+  Settings,
+  BarChart3,
+  FileText,
+  NotebookPen,
+  Briefcase,
+  Rocket,
+  Menu,
+  X,
+} from "lucide-react";
+import Sidebar from "../../components/sidebar/sidebar";
+import MobileNavbar from "../../components/MNavbar/MobileNavbar";
+import { useState } from "react";
 
 export default function Dashboard() {
+  const [activeTab, setActiveTab] = useState("Dashboard");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const tabs = [
+    "Dashboard",
+    "Resume Optimizer",
+    "Resume Builder",
+    "Note Tracker",
+    "Interview Prep",
+    "Applications",
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 font-inter">
-      {/* Sidebar */}
-      <aside className="fixed left-0 top-0 h-full w-60 bg-white shadow-md p-5 flex flex-col justify-between">
-        <div>
-          {/* <h1 className="text-2xl font-bold text-indigo-600 mb-8">Placed</h1> */}
-          <img
-          src="/logo.png"
-          alt="Placed Logo"
-          className="h-[120px] w-[200px] object-contain mr-1"
-        />
-          <nav className="space-y-3">
-            <SidebarItem icon={<BarChart3 size={18} />} text="Dashboard" active />
-            <SidebarItem icon={<Settings size={18} />} text="Resume Optimizer" />
-            <SidebarItem icon={<FileText size={18} />} text="Resume Builder" />
-            <SidebarItem icon={<NotebookPen size={18} />} text="Note Tracker" />
-            <SidebarItem icon={<Rocket size={18} />} text="Interview Prep" />
-            <SidebarItem icon={<Briefcase size={18} />} text="Applications" />
-          </nav>
-        </div>
-        <div>
-          <SidebarItem text="Pricing" />
-          <div className="flex items-center mt-4">
-            <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold">
-              R
-            </div>
-            <p className="ml-2 font-medium">Rahul Bedia</p>
-          </div>
-        </div>
-      </aside>
+    <div className="min-h-screen bg-gray-50 text-gray-800 font-inter flex">
+      
+      <Sidebar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+      />
+
+     
 
       {/* Main Content */}
-      <main className="ml-60 p-8">
-        {/* Header Section */}
-        <motion.div
-          className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6 rounded-2xl flex items-center justify-between shadow-lg"
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
+      <main className="flex-1 md:ml-60 mt-16 md:mt-0 p-6 md:p-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8">
+          {/* 🔹 Left Column (Main Content) */}
           <div>
-            <h2 className="text-xl font-semibold">100% Interview Prep With Accurate Tools</h2>
-            <p className="text-sm text-gray-200">Get your job today!</p>
-          </div>
-          <button className="bg-white text-indigo-600 px-4 py-2 rounded-xl font-semibold hover:bg-gray-100 transition flex items-center gap-2">
-            Start Preparation <Rocket size={16} />
-          </button>
-        </motion.div>
+            {/* Horizontal Navbar (hide on mobile) */}
+            <div className="hidden md:flex gap-3 mb-6 items-center flex-wrap">
+              {tabs
+                .slice(0, tabs.indexOf(activeTab) + 1)
+                .map((tab, index, arr) => (
+                  <div key={tab} className="flex items-center">
+                    <button
+                      onClick={() => setActiveTab(tab)}
+                      className={`px-3 py-2 rounded-lg font-medium transition ${activeTab === tab
+                        ? "bg-indigo-600 text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        }`}
+                    >
+                      {tab}
+                    </button>
+                    {index < arr.length - 1 && (
+                      <span className="mx-2 text-gray-400">{">"}</span>
+                    )}
+                  </div>
+                ))}
+            </div>
 
-        {/* Resume Upload */}
-        <motion.div
-          className="mt-6 bg-white rounded-xl p-6 shadow-sm"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-        >
-          <h3 className="text-lg font-semibold mb-3">Recent Resume</h3>
-          <div className="border border-dashed border-gray-300 rounded-lg p-6 text-center">
-            <p className="text-gray-500 mb-4">No resume uploaded</p>
-            <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center gap-2 mx-auto">
-              <Upload size={16} /> Upload Resume
-            </button>
-          </div>
-        </motion.div>
+            {/* Header Section */}
+            <motion.div
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white min-h-48 p-8 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between shadow-lg"
+              initial={{ opacity: 0, y: -30 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <div>
+                <h2 className="text-2xl font-bold">
+                  100% Interview Prep With Accurate Tools
+                </h2>
+                <p className="text-base text-gray-200">Get your job today!</p>
+              </div>
+              <button className="bg-white text-indigo-600 px-6 py-3 mt-4 md:mt-0 rounded-xl font-semibold hover:bg-gray-100 transition flex items-center gap-2">
+                Start Preparation <Rocket size={18} />
+              </button>
+            </motion.div>
 
-        {/* Overview Section */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <StatCard title="Interview Sessions" count="01/01" delay={0.2} />
-          <StatCard title="Resume Optimization" count="01/01" delay={0.3} />
-          <StatCard title="Create Notes" count="03/03" delay={0.4} />
+            {/* Resume Upload */}
+            <motion.div
+              className="mt-6 bg-white rounded-xl p-6 shadow-sm"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <h3 className="text-lg font-semibold mb-3">Recent Resume</h3>
+              <div className="border border-dashed border-gray-300 rounded-lg p-6 text-center">
+                <p className="text-gray-500 mb-4">No resume uploaded</p>
+                <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center gap-2 mx-auto">
+                  <Upload size={16} /> Upload Resume
+                </button>
+              </div>
+            </motion.div>
+
+            {/* Overview Section */}
+            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <StatCard title="Interview Sessions" count="01/01" delay={0.2} />
+              <StatCard title="Resume Optimization" count="01/01" delay={0.3} />
+              <JobCard delay={0.4} />
+            </div>
+
+            {/* Auto Application */}
+            <motion.div
+              className="mt-8 bg-blue-50 rounded-xl p-6 shadow-sm"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+            >
+              <h3 className="text-lg font-semibold mb-2">Auto application on</h3>
+              <p className="text-2xl font-bold">70+ Applications</p>
+              <p className="text-green-500 text-sm mt-1">+11.01%</p>
+
+              <div className="flex items-end gap-4 mt-4">
+                <Bar label="Dice" value={20} color="bg-red-400" />
+                <Bar label="LinkedIn" value={25} color="bg-blue-500" />
+                <Bar label="Monster" value={18} color="bg-purple-400" />
+                <Bar label="ZipRecruiter" value={25} color="bg-gray-600" />
+                <Bar label="Others" value={20} color="bg-indigo-300" />
+              </div>
+            </motion.div>
+
+            {/* Activity Feed */}
+            <motion.div
+              className="mt-8 bg-white rounded-xl p-6 shadow-sm mb-10"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+            >
+              <h3 className="text-lg font-semibold mb-3">Activity Feed</h3>
+              <div className="flex gap-2 flex-wrap">
+                <Tag text="Resume Optimization" />
+                <Tag text="Interview Preparation" />
+                <Tag text="Notes Tracker" />
+              </div>
+            </motion.div>
+          </div>
+
+          {/* 🔹 Right Column (Job Postings — hidden on mobile) */}
+          <div className="hidden lg:block">
+            <motion.div
+              className="bg-white rounded-xl p-6 shadow-sm h-fit mt-14"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+            >
+              <h3 className="text-lg font-semibold mb-2">Job Postings</h3>
+              <p className="text-gray-500">Currently no jobs available.</p>
+            </motion.div>
+          </div>
         </div>
-
-        {/* Auto Application */}
-        <motion.div
-          className="mt-8 bg-blue-50 rounded-xl p-6 shadow-sm"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-        >
-          <h3 className="text-lg font-semibold mb-2">Auto application on</h3>
-          <p className="text-2xl font-bold">70+ Applications</p>
-          <p className="text-green-500 text-sm mt-1">+11.01%</p>
-
-          <div className="flex items-end gap-4 mt-4">
-            <Bar label="Dice" value={20} color="bg-red-400" />
-            <Bar label="LinkedIn" value={25} color="bg-blue-500" />
-            <Bar label="Monster" value={18} color="bg-purple-400" />
-            <Bar label="ZipRecruiter" value={25} color="bg-gray-600" />
-            <Bar label="Others" value={20} color="bg-indigo-300" />
-          </div>
-        </motion.div>
-
-        {/* Activity Feed */}
-        <motion.div
-          className="mt-8 bg-white rounded-xl p-6 shadow-sm"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-        >
-          <h3 className="text-lg font-semibold mb-3">Activity Feed</h3>
-          <div className="flex gap-2 flex-wrap">
-            <Tag text="Resume Optimization" />
-            <Tag text="Interview Preparation" />
-            <Tag text="Notes Tracker" />
-          </div>
-        </motion.div>
       </main>
+
     </div>
   );
 }
 
 /* 🔹 Sidebar Item Component */
-function SidebarItem({ icon, text, active }) {
+function SidebarItem({ icon, text, active, onClick }) {
   return (
     <div
-      className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition ${
-        active ? "bg-indigo-100 text-indigo-600 font-medium" : "hover:bg-gray-100"
-      }`}
+      onClick={onClick}
+      className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition ${active
+        ? "bg-indigo-100 text-indigo-600 font-medium"
+        : "hover:bg-gray-100"
+        }`}
     >
       {icon}
       <span>{text}</span>
@@ -128,7 +179,20 @@ function SidebarItem({ icon, text, active }) {
   );
 }
 
-/* 🔹 Stat Card Component */
+/* 🔹 Icon Getter */
+function getIcon(name) {
+  const icons = {
+    Dashboard: <BarChart3 size={18} />,
+    "Resume Optimizer": <Settings size={18} />,
+    "Resume Builder": <FileText size={18} />,
+    "Note Tracker": <NotebookPen size={18} />,
+    "Interview Prep": <Rocket size={18} />,
+    Applications: <Briefcase size={18} />,
+  };
+  return icons[name];
+}
+
+/* 🔹 Stat Card */
 function StatCard({ title, count, delay }) {
   return (
     <motion.div
@@ -146,7 +210,27 @@ function StatCard({ title, count, delay }) {
   );
 }
 
-/* 🔹 Bar Component */
+/* 🔹 Job Card */
+function JobCard({ delay }) {
+  return (
+    <motion.div
+      className="bg-white rounded-xl p-5 shadow-sm flex flex-col justify-between text-center"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay }}
+    >
+      <p className="text-gray-600">Job Openings</p>
+      <h4 className="text-xl font-semibold mt-2 text-gray-500">
+        No job openings currently
+      </h4>
+      <button className="mt-4 text-sm bg-indigo-50 text-indigo-600 px-3 py-1 rounded-lg hover:bg-indigo-100">
+        Refresh
+      </button>
+    </motion.div>
+  );
+}
+
+/* 🔹 Bar */
 function Bar({ label, value, color }) {
   return (
     <div className="text-center">
@@ -159,7 +243,7 @@ function Bar({ label, value, color }) {
   );
 }
 
-/* 🔹 Tag Component */
+/* 🔹 Tag */
 function Tag({ text }) {
   return (
     <span className="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-lg text-sm font-medium">
@@ -167,6 +251,3 @@ function Tag({ text }) {
     </span>
   );
 }
-
-
-
