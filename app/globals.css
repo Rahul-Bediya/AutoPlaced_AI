@@ -13,4 +13,37 @@
   width: max-content;
   animation: scroll 20s linear infinite;
 }
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+/* .scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+} */
 
+/* nicer thin scrollbar (visible, but subtle) */
+.no-scrollbar::-webkit-scrollbar {
+  height: 8px;
+}
+.no-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.no-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(15, 23, 42, 0.12); /* subtle gray */
+  border-radius: 9999px;
+}
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: thin; /* Firefox */
+}
+
+/* optional: ensure the page width looks fixed and centered across sections
+   You already have the max-w wrapper in the component; if you prefer a global
+   fixed width for every page replace 'max-w-5xl' with your preferred value. */

@@ -13,25 +13,26 @@ import {
   X,
 } from "lucide-react";
 import Sidebar from "../../components/sidebar/sidebar";
-import MobileNavbar from "../../components/MNavbar/MobileNavbar";
+import BreadcrumbNav from "../../components/sidebar/BreadcrumbNav";
+
 import { useState } from "react";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("Dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const tabs = [
-    "Dashboard",
-    "Resume Optimizer",
-    "Resume Builder",
-    "Note Tracker",
-    "Interview Prep",
-    "Applications",
-  ];
+  // const tabs = [
+  //   "Dashboard",
+  //   "Resume Optimizer",
+  //   "Resume Builder",
+  //   "Note Tracker",
+  //   "Interview Prep",
+  //   "Applications",
+  // ];
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 font-inter flex">
-      
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-pink-50 to-white text-gray-800 font-inter flex">
+
       <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -39,7 +40,7 @@ export default function Dashboard() {
         setSidebarOpen={setSidebarOpen}
       />
 
-     
+
 
       {/* Main Content */}
       <main className="flex-1 md:ml-60 mt-16 md:mt-0 p-6 md:p-8">
@@ -47,7 +48,7 @@ export default function Dashboard() {
           {/* 🔹 Left Column (Main Content) */}
           <div>
             {/* Horizontal Navbar (hide on mobile) */}
-            <div className="hidden md:flex gap-3 mb-6 items-center flex-wrap">
+            {/* <div className="hidden md:flex gap-3 mb-6 items-center flex-wrap">
               {tabs
                 .slice(0, tabs.indexOf(activeTab) + 1)
                 .map((tab, index, arr) => (
@@ -66,7 +67,8 @@ export default function Dashboard() {
                     )}
                   </div>
                 ))}
-            </div>
+            </div> */}
+             <BreadcrumbNav activeTab={activeTab} />
 
             {/* Header Section */}
             <motion.div
@@ -87,25 +89,27 @@ export default function Dashboard() {
 
             {/* Resume Upload */}
             <motion.div
-              className="mt-6 bg-white rounded-xl p-6 shadow-sm"
+              className="mt-6 bg-white rounded-xl p-6 shadow-lg shadow-indigo-100 border border-gray-200"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
             >
-              <h3 className="text-lg font-semibold mb-3">Recent Resume</h3>
-              <div className="border border-dashed border-gray-300 rounded-lg p-6 text-center">
+              <h3 className="text-lg font-semibold mb-3 text-gray-800">Recent Resume</h3>
+              <div className="border border-dashed border-indigo-300 rounded-lg p-6 text-center bg-gray-50">
                 <p className="text-gray-500 mb-4">No resume uploaded</p>
-                <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center gap-2 mx-auto">
+                <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center gap-2 mx-auto shadow-md hover:shadow-lg transition-all">
                   <Upload size={16} /> Upload Resume
                 </button>
               </div>
             </motion.div>
 
+
             {/* Overview Section */}
             <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <StatCard title="Interview Sessions" count="01/01" delay={0.2} />
               <StatCard title="Resume Optimization" count="01/01" delay={0.3} />
-              <JobCard delay={0.4} />
+              <StatCard title="NotesTracker" count="01/01" delay={0.3} />
+
             </div>
 
             {/* Auto Application */}
@@ -145,9 +149,9 @@ export default function Dashboard() {
           </div>
 
           {/* 🔹 Right Column (Job Postings — hidden on mobile) */}
-          <div className="hidden lg:block">
+          <div className="hidden lg:block ">
             <motion.div
-              className="bg-white rounded-xl p-6 shadow-sm h-fit mt-14"
+              className="bg-white rounded-xl p-6 shadow-lg shadow-indigo-100 border border-gray-200 h-fit mt-14"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7 }}
@@ -164,20 +168,20 @@ export default function Dashboard() {
 }
 
 /* 🔹 Sidebar Item Component */
-function SidebarItem({ icon, text, active, onClick }) {
-  return (
-    <div
-      onClick={onClick}
-      className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition ${active
-        ? "bg-indigo-100 text-indigo-600 font-medium"
-        : "hover:bg-gray-100"
-        }`}
-    >
-      {icon}
-      <span>{text}</span>
-    </div>
-  );
-}
+// function SidebarItem({ icon, text, active, onClick }) {
+//   return (
+//     <div
+//       onClick={onClick}
+//       className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition ${active
+//         ? "bg-indigo-100 text-indigo-600 font-medium"
+//         : "hover:bg-gray-100"
+//         }`}
+//     >
+//       {icon}
+//       <span>{text}</span>
+//     </div>
+//   );
+// }
 
 /* 🔹 Icon Getter */
 function getIcon(name) {
@@ -196,39 +200,22 @@ function getIcon(name) {
 function StatCard({ title, count, delay }) {
   return (
     <motion.div
-      className="bg-white rounded-xl p-5 shadow-sm flex flex-col justify-between"
+      className="bg-white rounded-xl p-5 shadow-lg shadow-indigo-100 border border-gray-200 flex flex-col justify-between"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay }}
     >
-      <p className="text-gray-600">{title}</p>
+      <p className="text-black">{title}</p>
       <h4 className="text-2xl font-bold mt-2">{count}</h4>
       <button className="mt-4 text-sm bg-indigo-50 text-indigo-600 px-3 py-1 rounded-lg hover:bg-indigo-100">
-        Get More Attempts
+        create session
       </button>
     </motion.div>
   );
 }
 
 /* 🔹 Job Card */
-function JobCard({ delay }) {
-  return (
-    <motion.div
-      className="bg-white rounded-xl p-5 shadow-sm flex flex-col justify-between text-center"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay }}
-    >
-      <p className="text-gray-600">Job Openings</p>
-      <h4 className="text-xl font-semibold mt-2 text-gray-500">
-        No job openings currently
-      </h4>
-      <button className="mt-4 text-sm bg-indigo-50 text-indigo-600 px-3 py-1 rounded-lg hover:bg-indigo-100">
-        Refresh
-      </button>
-    </motion.div>
-  );
-}
+
 
 /* 🔹 Bar */
 function Bar({ label, value, color }) {
