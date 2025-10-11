@@ -32,11 +32,11 @@ export default function Hero() {
       </div>
 
       {/* CTA */}
-      <Link href="/dashboard">
+     
       <button className="mt-10 px-8 py-4 bg-indigo-600 text-white rounded-full text-lg font-semibold shadow-lg hover:bg-[#E9E4F0] hover:text-black transition duration-300">
-        Get Placed for Free →
+        <Link href="/dashboard"> Get Placed for Free →</Link>
       </button>
-    </Link>
+    
 
       {/* Active Users */}
       <div className="flex items-center gap-3 mt-6 text-gray-600">

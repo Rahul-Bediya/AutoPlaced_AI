@@ -145,7 +145,7 @@ export default function Sidebar({ activeTab, setActiveTab, sidebarOpen, setSideb
     { text: "Resume Optimizer", route: "/resume-optimizer" },
     { text: "Resume Builder", route: "/resume-builder" },
     { text: "Note Tracker", route: "/notestracker" },
-    { text: "Interview Prep", route: "/interview-prep" },
+    { text: "Interview Prep", route: "/aiinterview" },
     { text: "Applications", route: "/applications" },
   ];
 

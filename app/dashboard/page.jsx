@@ -21,14 +21,7 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("Dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // const tabs = [
-  //   "Dashboard",
-  //   "Resume Optimizer",
-  //   "Resume Builder",
-  //   "Note Tracker",
-  //   "Interview Prep",
-  //   "Applications",
-  // ];
+ 
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-pink-50 to-white text-gray-800 font-inter flex">
@@ -47,27 +40,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8">
           {/* 🔹 Left Column (Main Content) */}
           <div>
-            {/* Horizontal Navbar (hide on mobile) */}
-            {/* <div className="hidden md:flex gap-3 mb-6 items-center flex-wrap">
-              {tabs
-                .slice(0, tabs.indexOf(activeTab) + 1)
-                .map((tab, index, arr) => (
-                  <div key={tab} className="flex items-center">
-                    <button
-                      onClick={() => setActiveTab(tab)}
-                      className={`px-3 py-2 rounded-lg font-medium transition ${activeTab === tab
-                        ? "bg-indigo-600 text-white"
-                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                        }`}
-                    >
-                      {tab}
-                    </button>
-                    {index < arr.length - 1 && (
-                      <span className="mx-2 text-gray-400">{">"}</span>
-                    )}
-                  </div>
-                ))}
-            </div> */}
+          
              <BreadcrumbNav activeTab={activeTab} />
 
             {/* Header Section */}
@@ -167,34 +140,7 @@ export default function Dashboard() {
   );
 }
 
-/* 🔹 Sidebar Item Component */
-// function SidebarItem({ icon, text, active, onClick }) {
-//   return (
-//     <div
-//       onClick={onClick}
-//       className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition ${active
-//         ? "bg-indigo-100 text-indigo-600 font-medium"
-//         : "hover:bg-gray-100"
-//         }`}
-//     >
-//       {icon}
-//       <span>{text}</span>
-//     </div>
-//   );
-// }
 
-/* 🔹 Icon Getter */
-function getIcon(name) {
-  const icons = {
-    Dashboard: <BarChart3 size={18} />,
-    "Resume Optimizer": <Settings size={18} />,
-    "Resume Builder": <FileText size={18} />,
-    "Note Tracker": <NotebookPen size={18} />,
-    "Interview Prep": <Rocket size={18} />,
-    Applications: <Briefcase size={18} />,
-  };
-  return icons[name];
-}
 
 /* 🔹 Stat Card */
 function StatCard({ title, count, delay }) {
