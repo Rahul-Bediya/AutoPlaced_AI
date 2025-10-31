@@ -89,7 +89,7 @@ export default function Footer() {
 
       {/* === Bottom Text === */}
       <div className="border-t border-white/10 text-center text-gray-400 text-sm py-4">
-        © Placed 2025. All rights reserved
+        © AutoPlaced 2025. All rights reserved
       </div>
     </footer>
   );
