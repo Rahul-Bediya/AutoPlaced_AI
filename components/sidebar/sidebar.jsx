@@ -142,7 +142,7 @@ export default function Sidebar({ activeTab, setActiveTab, sidebarOpen, setSideb
 
   const tabs = [
     { text: "Dashboard", route: "/dashboard" },
-    { text: "Resume Optimizer", route: "/resume-optimizer" },
+    { text: "Resume Optimizer", route: "/resumeoptimizer" },
     { text: "Resume Builder", route: "/resumebuilder" },
     { text: "Note Tracker", route: "/notestracker" },
     { text: "Interview Prep", route: "/aiinterview" },

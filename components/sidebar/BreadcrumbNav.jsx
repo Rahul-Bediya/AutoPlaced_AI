@@ -7,10 +7,10 @@ export default function BreadcrumbNav({ activeTab }) {
 
   const tabRoutes = {
     Dashboard: "/dashboard",
-    "Resume Optimizer": "/resume-optimizer",
-    "Resume Builder": "/resume-builder",
-    "Note Tracker": "/create-notes",
-    "Interview Prep": "/interview-prep",
+    "Resume Optimizer": "/resumeoptimizer",
+    "Resume Builder": "/resumebuilder",
+    "Note Tracker": "/createnotes",
+    "Interview Prep": "/interviewprep",
     Applications: "/applications",
   };
 

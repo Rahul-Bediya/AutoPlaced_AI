@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import Sidebar from "../../components/sidebar/sidebar";
 import BreadcrumbNav from "../../components/sidebar/BreadcrumbNav";
+import Link from "next/link";
 
 import { useState } from "react";
 
@@ -56,7 +57,7 @@ export default function Dashboard() {
                 <p className="text-base text-gray-200">Get your job today!</p>
               </div>
               <button className="bg-white text-indigo-600 px-6 py-3 mt-4 md:mt-0 rounded-xl font-semibold hover:bg-gray-100 transition flex items-center gap-2">
-                Start Preparation <Rocket size={18} />
+              <Link href="/aiinterview"> Start Preparation</Link> <Rocket size={18} />
               </button>
             </motion.div>
 

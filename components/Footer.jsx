@@ -76,9 +76,7 @@ export default function Footer() {
         <button className="border border-white/30 text-white px-4 py-2 rounded-full text-sm hover:bg-white/10 transition">
           Facebook
         </button>
-        <button className="border border-white/30 text-white px-4 py-2 rounded-full text-sm hover:bg-white/10 transition">
-          Tiktok
-        </button>
+        
         <button className="border border-white/30 text-white px-4 py-2 rounded-full text-sm hover:bg-white/10 transition">
           LinkedIn
         </button>
