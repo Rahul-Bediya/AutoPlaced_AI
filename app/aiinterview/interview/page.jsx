@@ -1,4 +1,322 @@
 
+// "use client";
+// import { useState, useEffect, useRef } from "react";
+// import { Mic, Volume2, Redo2, CircleDot, Play } from "lucide-react";
+// import { motion } from "framer-motion";
+
+// import Sidebar from "../../../components/sidebar/sidebar";
+// import BreadcrumbNav from "../../../components/sidebar/BreadcrumbNav";
+// import { useSearchParams } from "next/navigation";
+
+// export default function Interview() {
+//   const [activeTab, setActiveTab] = useState("interview-prep");
+//   const [sidebarOpen, setSidebarOpen] = useState(false);
+//   const [session, setSession] = useState(null);
+//   const [timeLeft, setTimeLeft] = useState(60);
+//   const [recording, setRecording] = useState(false);
+//   const [questionIndex, setQuestionIndex] = useState(0);
+//   const [answers, setAnswers] = useState({});
+//   const [speakingQuestion, setSpeakingQuestion] = useState(false);
+
+//   const videoRef = useRef(null);
+//   const searchParams = useSearchParams();
+//   const sessionId = searchParams.get("session");
+//   const recognitionRef = useRef(null);
+
+//   // 🎤 Setup speech recognition
+//   useEffect(() => {
+//     if (!("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
+//       console.warn("Speech recognition not supported");
+//       return;
+//     }
+
+//     const SpeechRecognition =
+//       window.SpeechRecognition || window.webkitSpeechRecognition;
+//     const recognition = new SpeechRecognition();
+//     recognition.continuous = true;
+//     recognition.interimResults = true;
+//     recognition.lang = "en-US";
+
+//     recognition.onresult = (event) => {
+//       const transcript = Array.from(event.results)
+//         .map((r) => r[0].transcript)
+//         .join(" ");
+//       const qid = session?.questions[questionIndex]?.id;
+//       if (qid) {
+//         setAnswers((prev) => ({
+//           ...prev,
+//           [qid]: { ...(prev[qid] || {}), text: transcript },
+//         }));
+//       }
+//     };
+
+//     recognitionRef.current = recognition;
+//   }, [session, questionIndex]);
+
+//   const toggleRecording = () => {
+//     if (!recognitionRef.current) return;
+//     if (!recording) {
+//       recognitionRef.current.start();
+//       setRecording(true);
+//     } else {
+//       recognitionRef.current.stop();
+//       setRecording(false);
+//     }
+//   };
+
+//   // 🎥 Camera setup
+//   useEffect(() => {
+//     async function initCamera() {
+//       try {
+//         const stream = await navigator.mediaDevices.getUserMedia({
+//           video: true,
+//           audio: true,
+//         });
+//         if (videoRef.current) videoRef.current.srcObject = stream;
+//       } catch (err) {
+//         console.error("Camera access denied:", err);
+//       }
+//     }
+//     initCamera();
+//     return () => {
+//       if (videoRef.current?.srcObject) {
+//         videoRef.current.srcObject.getTracks().forEach((t) => t.stop());
+//       }
+//     };
+//   }, []);
+
+//   // ⏱ Timer
+//   useEffect(() => {
+//     const timer = setInterval(() => {
+//       setTimeLeft((t) => (t > 0 ? t - 1 : 0));
+//     }, 1000);
+//     return () => clearInterval(timer);
+//   }, [questionIndex]);
+
+//   // 🧠 Fetch questions
+//   useEffect(() => {
+//     if (!sessionId) return;
+//     fetch(`/api/session?id=${encodeURIComponent(sessionId)}`)
+//       .then((r) => r.json())
+//       .then((data) => {
+//         if (data.error) throw new Error(data.error);
+//         setSession(data);
+//       })
+//       .catch((err) => {
+//         console.error("session fetch", err);
+//         alert("Failed to fetch session: " + err.message);
+//       });
+//   }, [sessionId]);
+
+//   // 🗣️ Speak question automatically when it appears
+//   useEffect(() => {
+//     if (!session) return;
+//     const current = session.questions?.[questionIndex];
+//     if (!current?.text) return;
+
+//     speakQuestion(current.text);
+
+//     return () => {
+//       // stop previous speech when question changes
+//       window.speechSynthesis.cancel();
+//     };
+//   }, [questionIndex, session]);
+
+//   // 🗣️ Text-to-speech function
+//   const speakQuestion = (text) => {
+//     if (!("speechSynthesis" in window)) {
+//       console.warn("Speech synthesis not supported");
+//       return;
+//     }
+
+//     setSpeakingQuestion(true);
+//     window.speechSynthesis.cancel(); // stop previous speech
+
+//     const utterance = new SpeechSynthesisUtterance(text);
+//     utterance.lang = "en-US";
+//     utterance.rate = 1; // speed
+//     utterance.pitch = 1;
+//     utterance.onend = () => setSpeakingQuestion(false);
+//     utterance.onerror = () => setSpeakingQuestion(false);
+
+//     window.speechSynthesis.speak(utterance);
+//   };
+
+//   if (!session) return <div className="p-8">Loading interview...</div>;
+
+//   const questions = session.questions || [];
+//   const current = questions[questionIndex];
+
+//   const handleNext = () => {
+//     if (questionIndex < questions.length - 1) {
+//       setQuestionIndex((q) => q + 1);
+//       setTimeLeft(60);
+//     } else {
+//       submitInterview();
+//     }
+//   };
+
+//   const submitInterview = async () => {
+//     const payload = {};
+//     for (const q of questions) {
+//       payload[q.id] = (answers[q.id]?.text || "").trim();
+//     }
+//     try {
+//       const res = await fetch("/api/submit-interview", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ sessionId: session.id, answers: payload }),
+//       });
+//       const json = await res.json();
+//       if (!res.ok) throw new Error(json.error || "Submission failed");
+//       setSession((prev) => ({ ...prev, results: json.results }));
+//     } catch (err) {
+//       console.error(err);
+//       alert("Failed to submit interview: " + err.message);
+//     }
+//   };
+
+//   return (
+//     <div className="min-h-screen flex bg-gray-50 text-gray-800 font-inter">
+//       <Sidebar
+//         activeTab={activeTab}
+//         setActiveTab={setActiveTab}
+//         sidebarOpen={sidebarOpen}
+//         setSidebarOpen={setSidebarOpen}
+//       />
+
+
+
+//       <main className="flex-1 md:ml-60 p-8 bg-gradient-to-br from-indigo-50 via-white to-purple-50 min-h-screen">
+//         <BreadcrumbNav activeTab={activeTab} />
+
+//         <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-10 mt-8">
+//           {/* 🎥 Left Section */}
+//           <motion.div
+//             initial={{ opacity: 0, y: 40 }}
+//             animate={{ opacity: 1, y: 0 }}
+//             transition={{ duration: 0.6 }}
+//             className="bg-gradient-to-br from-white to-indigo-50 border border-indigo-100 rounded-2xl shadow-2xl p-6 hover:shadow-indigo-200 hover:-translate-y-1 transition-all duration-300"
+//           >
+//             {/* Header */}
+//             <div className="flex justify-between items-center mb-5">
+//               <div className="flex items-center gap-3">
+//                 <img src="/logo.png" alt="logo" className="h-8 w-8 rounded-full border border-gray-200" />
+//                 <div>
+//                   <p className="font-semibold text-base text-gray-800">AutoPlaced</p>
+//                   <p className="text-xs text-gray-500">Your AI Partner</p>
+//                 </div>
+//               </div>
+
+//               <div className="flex items-center gap-3">
+//                 <Volume2 className="text-indigo-500 hover:scale-110 transition-transform" size={18} />
+//                 <Redo2 className="text-indigo-500 hover:rotate-180 transition-transform" size={18} />
+//                 <div className="flex items-center gap-1 text-red-500 font-semibold text-sm">
+//                   <CircleDot size={10} className="animate-pulse" />
+//                   {String(Math.floor(timeLeft / 60)).padStart(2, "0")}:
+//                   {String(timeLeft % 60).padStart(2, "0")}
+//                 </div>
+//               </div>
+//             </div>
+
+//             {/* Video */}
+//             <div className="relative bg-gray-900 rounded-2xl overflow-hidden shadow-inner">
+//               <video
+//                 ref={videoRef}
+//                 autoPlay
+//                 muted
+//                 playsInline
+//                 className="w-full h-[400px] object-cover"
+//               />
+//               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
+//             </div>
+
+//             {/* Controls */}
+//             <div className="flex justify-between items-center mt-5">
+//               <div className="text-sm text-gray-700 font-medium bg-white/60 px-3 py-1 rounded-md shadow-sm">
+//                 {String(Math.floor(timeLeft / 60)).padStart(2, "0")}:
+//                 {String(timeLeft % 60).padStart(2, "0")}
+//               </div>
+
+//               <div className="flex gap-3">
+//                 {/* Record Button */}
+//                 <button
+//                   onClick={toggleRecording}
+//                   className={`group border px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2 shadow-lg transition-all duration-300 ${recording
+//                       ? "bg-gradient-to-r from-red-500 to-red-600 text-white border-red-500 shadow-red-300 hover:shadow-red-400"
+//                       : "bg-gradient-to-r from-indigo-100 to-purple-100 text-gray-800 border border-indigo-200 hover:shadow-indigo-200 hover:-translate-y-[1px]"
+//                     }`}
+//                 >
+//                   <Mic size={18} className={recording ? "animate-pulse" : ""} />
+//                   {recording ? "Recording..." : "Answer"}
+//                 </button>
+
+//                 {/* Next Button */}
+//                 <button
+//                   onClick={handleNext}
+//                   className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-indigo-400 transition-all duration-300"
+//                 >
+//                   Next →
+//                 </button>
+//               </div>
+//             </div>
+//           </motion.div>
+
+//           {/* 🧠 Right Section */}
+//           <motion.div
+//             initial={{ opacity: 0, y: 40 }}
+//             animate={{ opacity: 1, y: 0 }}
+//             transition={{ duration: 0.7, delay: 0.2 }}
+//             className="bg-gradient-to-br from-white to-purple-50 border border-purple-100 rounded-2xl shadow-xl p-6 flex flex-col hover:shadow-purple-200 hover:-translate-y-1 transition-all duration-300"
+//           >
+//             {/* Tags */}
+//             <div className="flex items-center gap-2 mb-4">
+//               <span className="text-xs font-semibold bg-gradient-to-r from-blue-100 to-blue-200 text-blue-700 px-2 py-1 rounded-md shadow-sm">
+//                 Technical
+//               </span>
+//               <span className="text-xs font-semibold bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800 px-2 py-1 rounded-md shadow-sm">
+//                 Medium
+//               </span>
+//             </div>
+
+//             {/* Question Section */}
+//             <div className="flex justify-between items-center mb-2">
+//               <h3 className="font-semibold text-gray-800 text-lg">Question</h3>
+//               <button
+//                 onClick={() => speakQuestion(current?.text)}
+//                 disabled={speakingQuestion}
+//                 className={`flex items-center gap-2 text-sm px-3 py-1.5 rounded-md border font-medium transition-all ${speakingQuestion
+//                     ? "bg-gray-100 text-gray-400"
+//                     : "bg-gradient-to-r from-indigo-100 to-purple-100 text-gray-700 hover:shadow-md hover:-translate-y-[1px]"
+//                   }`}
+//               >
+//                 <Play size={14} />
+//                 {speakingQuestion ? "Speaking..." : "Listen again"}
+//               </button>
+//             </div>
+
+//             <p className="text-sm text-gray-700 mb-5 leading-relaxed">
+//               {current?.text ||
+//                 "Explain the difference between synchronous and asynchronous programming in JavaScript."}
+//             </p>
+
+//             {/* Answer Section */}
+//             <h3 className="font-semibold text-gray-800 mt-4 mb-2 text-lg">Answer</h3>
+//             <textarea
+//               readOnly
+//               rows={6}
+//               value={answers[current?.id]?.text || ""}
+//               className="w-full border rounded-xl p-3 text-sm text-gray-700 bg-gradient-to-br from-gray-50 to-gray-100 focus:outline-none resize-none shadow-inner"
+//               placeholder="Your answer will appear here as you speak..."
+//             />
+//           </motion.div>
+//         </div>
+//       </main>
+
+//     </div>
+//   );
+// }
+
 
 
 

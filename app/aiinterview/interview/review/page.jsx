@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import Sidebar from "../../../components/sidebar/sidebar";
-import BreadcrumbNav from "../../../components/sidebar/BreadcrumbNav";
+import Sidebar from "../../../../components/sidebar/sidebar";
+import BreadcrumbNav from "../../../../components/sidebar/BreadcrumbNav";
 
 /**
  * Review page for an interview session.

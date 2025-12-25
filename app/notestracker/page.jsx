@@ -4,9 +4,9 @@ import { useState } from "react";
 // import { motion } from "framer-motion";
 import Sidebar from "../../components/sidebar/sidebar";
 import BreadcrumbNav from "../../components/sidebar/BreadcrumbNav";
-import VideoSection from "@/components/CreateNotes/VideoSection";
-import ActionCards from "@/components/CreateNotes/ActionCards";
-import NotesSection from "@/components/CreateNotes/NotesSection";
+import VideoSection from "../../components/CreateNotes/VideoSection";
+import ActionCards from "../../components/CreateNotes/ActionCards";
+import NotesSection from "../../components/createnotes/NotesSection";
 
 export default function CreateNotesPage() {
   const [activeTab, setActiveTab] = useState("Note Tracker");
