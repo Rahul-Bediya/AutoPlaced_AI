@@ -4,7 +4,7 @@ import { useState } from "react";
 // import { motion } from "framer-motion";
 import Sidebar from "../../components/sidebar/sidebar";
 import BreadcrumbNav from "../../components/sidebar/BreadcrumbNav";
-import VideoSection from "../../components/Createnotes/VideoSection";
+import VideoSection from "../../components/createnotes/VideoSection";
 import ActionCards from "../../components/createnotes/ActionCards";
 import NotesSection from "../../components/createnotes/NotesSection";
 
