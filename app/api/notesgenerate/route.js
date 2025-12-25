@@ -1,315 +1,122 @@
-// import { NextResponse } from "next/server";
-// import { extractTextFromFile } from "@/lib/parse";
-
-// export const runtime = "nodejs";
-
-// const MAX_INPUT = 200000;
-// const MODEL = "llama-3.3-70b-versatile";
-
-// // ---------------- Helpers ------------------
-
-// function trimCap(input, max) {
-//   return input.length > max ? input.slice(0, max) : input;
-// }
-
-// function badRequest(msg) {
-//   return NextResponse.json({ error: msg }, { status: 400 });
-// }
-
-// function serverError(err) {
-//   const msg =
-//     typeof err === "object" && err && "message" in err
-//       ? String(err.message)
-//       : "Internal error";
-
-//   return NextResponse.json({ error: msg }, { status: 500 });
-// }
-
-// // function promptParts(content) {
-// //   const system =
-// //     "You are an educational content generator AI. Return only valid JSON. No markdown.";
-
-// //   const user = `
-// // CONTENT:
-// // ${content}
-
-// // TASK: Using the content above, generate the following STRICT JSON:
-
-// // {
-// //   "summaryShort": "<80-120 character summary>",
-// //   "summaryLong": "<2-4 sentence summary>",
-// //   "flashcards": [
-// //     { "term": "...", "definition": "..." },
-// //     ...
-// //   ],
-// //   "quizzes": [
-// //     {
-// //       "question": "...",
-// //       "options": ["A", "B", "C", "D"],
-// //       "answer": "B"
-// //     },
-// //     ...
-// //   ]
-// // }
-
-// // Rules:
-// // - Flashcards must be important concepts only
-// // - Quiz should be conceptual, not trivial
-// // - Never include explanations
-// // - JSON only!
-// // `;
-
-// //   return { system, user };
-// // }
-
-// // function safeJson(text) {
-// //   try {
-// //     return JSON.parse(text);
-// //   } catch {
-// //     return undefined;
-// //   }
-// // }
-
-
-// function promptParts(content) {
-//   const system =
-//     "You are an educational content generator AI. Return only valid JSON. No markdown. Do not include explanations. Do not hallucinate. ONLY use information found in the provided content.";
-
-//   const user = `
-// CONTENT (raw PDF text, may contain noise):
-// ${content}
-
-// TASK:
-// You MUST extract information ONLY from the above content.
-// If something is missing, output "unknown" instead of guessing.
-
-// Clean this mentally:
-// - headers/footers
-// - page numbers
-// - references
-// - random broken text
-
-// Generate STRICT JSON:
-
-// {
-//   "summaryShort": "<80-120 character summary>",
-//   "summaryLong": "<2-4 sentence summary>",
-//   "keyPoints": [
-//     "<key point 1>",
-//     "<key point 2>",
-//     "<key point 3>",
-//     "<key point 4>",
-//     "<key point 5>"
-//   ],
-//   "definitions": [
-//     { "term": "<term>", "meaning": "<definition>" }
-//   ],
-//   "flashcards": [
-//     { "term": "...", "definition": "..." }
-//   ],
-//   "quizzes": [
-//     {
-//       "question": "...",
-//       "options": ["A", "B", "C", "D"],
-//       "answer": "B"
-//     }
-//   ]
-// }
-
-// STRICT RULES:
-// - JSON ONLY
-// - NEVER introduce topics not present in content
-// - If unsure, return "unknown"
-// - DO NOT default to machine learning topics
-// - If PDF contains too little text, return summary: "unknown"
-// `;
-//   return { system, user };
-// }
-
-
-// function safeJson(text) {
-//   try {
-//     return JSON.parse(text);
-//   } catch {
-//     return undefined;
-//   }
-// }
-
-
-// async function getAI(content) {
-//   const { system, user } = promptParts(content);
-
-//   const grokRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//       Authorization: `Bearer ${process.env.GROK_API_KEY}`,
-//     },
-//     body: JSON.stringify({
-//       model: MODEL,
-//       messages: [
-//         { role: "system", content: system },
-//         { role: "user", content: user },
-//       ],
-//       temperature: 0,
-//       max_tokens: 2000,
-//     }),
-//   });
-
-//   if (!grokRes.ok) {
-//     const text = await grokRes.text();
-//     throw new Error("Groq API error: " + text);
-//   }
-
-//   const data = await grokRes.json();
-//   const txt = data.choices?.[0]?.message?.content?.trim() || "";
-
-//   let parsed = safeJson(txt);
-//   if (!parsed) {
-//     const match = txt.match(/\{[\s\S]*\}/);
-//     parsed = match ? safeJson(match[0]) : undefined;
-//   }
-
-//   return parsed || {};
-// }
-
-// // ---------------- Route Handler ------------------
-
-// export async function POST(req) {
-//   try {
-//     if (!process.env.GROK_API_KEY) {
-//       return serverError("Missing GROK_API_KEY");
-//     }
-
-//     const contentType = req.headers.get("content-type") || "";
-//     if (!contentType.includes("multipart/form-data")) {
-//       return badRequest("Expected multipart/form-data");
-//     }
-
-//     const form = await req.formData();
-//     const file = form.get("file");
-
-//     if (!(file instanceof File)) {
-//       return badRequest("Missing file");
-//     }
-
-//     const raw = await extractTextFromFile(file, file.name);
-//     const content = trimCap(raw, MAX_INPUT);
-
-//     const ai = await getAI(content);
-
-//     // const payload = {
-//     //   summaryShort: ai.summaryShort || "",
-//     //   summaryLong: ai.summaryLong || "",
-//     //   flashcards: ai.flashcards || [],
-//     //   quizzes: ai.quizzes || [],
-//     //   meta: {
-//     //     filename: file.name,
-//     //   },
-//     // };
-//     const payload = {
-//       summaryShort: ai.summaryShort || "",
-//       summaryLong: ai.summaryLong || "",
-//       keyPoints: ai.keyPoints || [],
-//       definitions: ai.definitions || [],
-//       flashcards: ai.flashcards || [],
-//       quizzes: ai.quizzes || [],
-//       meta: { filename: file.name },
-//     };
-
-
-//     return NextResponse.json(payload);
-//   } catch (err) {
-//     console.error("[content-gen] Error:", err);
-//     return serverError(err);
-//   }
-// }
-
-// app/api/generate-summary/route.js
-// app/api/notesgenerate/route.js
+// app/api/generate-notes/route.js
 import { NextResponse } from "next/server";
-import { extractTextFromFile } from "@/lib/extractText";
 
+// Simple in-memory sessions store (development only)
+const sessions = global.__NOTES_SESSIONS || (global.__NOTES_SESSIONS = new Map());
 
-const MODEL = "llama-3.3-70b-versatile";
+const systemPrompt = `You are an expert educator and note-taker. Generate comprehensive, well-structured study notes on the given topic. 
+
+Your notes should:
+- Start with a clear overview/introduction
+- Be organized with clear headings and subheadings using markdown (## for main sections, ### for subsections)
+- Include key concepts, definitions, and explanations
+- Use bullet points for lists
+- Include code examples where relevant (especially for programming topics)
+- Add practical examples and use cases
+- Include tips and best practices
+- End with a summary of key takeaways
+
+Make the notes educational, clear, and suitable for learning. Use markdown formatting for better readability.`;
 
 export async function POST(req) {
   try {
-    const form = await req.formData();
-    const file = form.get("file");
+    const body = await req.json();
 
-    if (!file) {
-      return NextResponse.json({ error: "Missing file" }, { status: 400 });
+    const {
+      topics = "",           // String or comma-separated topics
+      level = "Beginner",    // optional: Beginner / Intermediate / Advanced
+      format = "markdown",   // 'markdown' | 'text' | 'html'
+      max_tokens = 1200,
+    } = body;
+
+    if (!topics || topics.toString().trim().length === 0) {
+      return NextResponse.json({ error: "Missing topics in body" }, { status: 400 });
     }
 
-    const text = await extractTextFromFile(file, file.name);
+    // Build a user prompt for the AI
+    const userPrompt = `
+Create comprehensive learning notes for the following topics:
+Topics: ${Array.isArray(topics) ? topics.join(", ") : topics}
+Target level: ${level}
+Output format: ${format}
 
-    const prompt = {
-      system: "You are an educational AI. Return ONLY JSON.",
-      user: `
-CONTENT:
-${text}
+Requirements:
+- Provide a clear table of contents / sections
+- For each section include: key concepts, concise definitions, one or two examples, common pitfalls, and quick exercises (3-5 short practice items)
+- Use bullet points and headings appropriate for the selected format
+Return the notes as a single ${format} string.
+`;
 
-TASK: Generate STRICT JSON:
-
-{
-  "summaryShort": "<80-120 chars>",
-  "summaryLong": "<2-4 sentences>",
-  "keyPoints": [
-    "- point",
-    "- point",
-    "- point",
-    "- point",
-    "- point"
-  ],
-  "definitions": [
-    "<term>: <definition>",
-    "<term>: <definition>"
-  ],
-  "flashcards": [
-    { "term": "...", "definition": "..." }
-  ],
-  "quizzes": [
-    {
-      "question": "...",
-      "options": ["A","B","C","D"],
-      "answer": "A"
-    }
-  ]
-}
-
-Rules:
-- No markdown
-- No commentary
-- JSON only
-      `
-    };
-
-    const resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    // Call your Grok/OpenAI-style API (keeps same pattern as your original)
+    const grokRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.GROQ_API_KEY}`
+        Authorization: `Bearer ${process.env.GROK_API_KEY || process.env.GROK_KEY}`,
       },
       body: JSON.stringify({
-        model: MODEL,
+        model: "llama-3.3-70b-versatile",
         messages: [
-          { role: "system", content: prompt.system },
-          { role: "user", content: prompt.user }
-        ]
-      })
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        temperature: 0.2,
+        max_tokens,
+      }),
     });
 
-    const data = await resp.json();
+    if (!grokRes.ok) {
+      const text = await grokRes.text();
+      console.error("Grok API error:", text);
+      return NextResponse.json({ error: "Grok API Error", details: text }, { status: 502 });
+    }
 
-    const raw = data.choices?.[0]?.message?.content?.trim() ?? "{}";
-    const json = JSON.parse(raw);
+    const data = await grokRes.json();
+    const notesText = data.choices?.[0]?.message?.content?.trim();
 
-    return NextResponse.json(json);
+    if (!notesText) throw new Error("No response from Grok API");
+
+    // Create a session to keep the notes on server memory (dev-only)
+    const sessionId = `n_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
+    const session = {
+      id: sessionId,
+      topics,
+      level,
+      format,
+      notes: notesText,
+      createdAt: Date.now(),
+    };
+
+    sessions.set(sessionId, session);
+
+    return NextResponse.json({ sessionId, notes: notesText });
   } catch (err) {
-    return NextResponse.json(
-      { error: err.message ?? "Server error" },
-      { status: 500 }
-    );
+    console.error("generate-notes error:", err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}
+
+/**
+ * GET — fetch notes by session id
+ * Example: /api/generate-notes?session=n_12345
+ */
+export async function GET(req) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const sessionId = searchParams.get("session");
+
+    if (!sessionId) {
+      return NextResponse.json({ error: "Missing session ID" }, { status: 400 });
+    }
+
+    const session = sessions.get(sessionId);
+    if (!session) {
+      return NextResponse.json({ error: "Session not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(session);
+  } catch (err) {
+    console.error("generate-notes GET error:", err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

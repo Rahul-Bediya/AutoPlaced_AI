@@ -74,29 +74,7 @@ export default function ResumeAnalyzer() {
 
   const removeSkill = (skill) => setSelected((prev) => prev.filter((s) => s !== skill));
 
-  // const onAnalyze = async () => {
-  //   setError(null);
-  //   if (!resumeFile) {
-  //     setError("Please upload a resume (PDF/DOCX/TXT)");
-  //     return;
-  //   }
-  //   setBusy(true);
-  //   try {
-  //     const fd = new FormData();
-  //     fd.append("resume", resumeFile);
-  //     fd.append("skills", JSON.stringify(combinedSkills.filter((s) => s !== "Other")));
-  //     if (jd.trim()) fd.append("jobDescription", jd.trim());
 
-  //     const res = await fetch("/api/analyse", { method: "POST", body: fd });
-  //     if (!res.ok) throw new Error((await res.text()) || `Request failed: ${res.status}`);
-  //     const data = await res.json();
-  //     setResult(data);
-  //   } catch (e) {
-  //     setError(e.message || "Something went wrong");
-  //   } finally {
-  //     setBusy(false);
-  //   }
-  // };
 
   const onAnalyze = async () => {
     setError(null);
@@ -254,103 +232,7 @@ export default function ResumeAnalyzer() {
           </Card>
 
           {/* RESULTS */}
-          <Card title="Results">
-            {!result ? (
-              <div className="text-sm text-gray-500">No results yet.</div>
-            ) : (
-              <div className="space-y-6">
-
-                {/* ATS SCORE */}
-                <div className="rounded-xl border p-4 shadow-inner bg-indigo-50/40">
-                  <div className="text-sm text-gray-600">ATS Score</div>
-                  <div className="text-3xl font-extrabold text-indigo-700">
-                    {result.ats?.score ?? 0}/100
-                  </div>
-                </div>
-
-                {/* MISSING SKILLS */}
-                <div>
-                  <h3 className="font-semibold text-gray-700 mb-2">Missing Skills</h3>
-                  {result.ai?.missing_skills?.length ? (
-                    <ul className="list-disc ml-6 text-sm text-gray-600 space-y-1">
-                      {result.ai.missing_skills.map((s, i) => (
-                        <li key={i}>{s}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-sm text-green-600">No major missing skills ✅</p>
-                  )}
-                </div>
-
-                {/* WEAK SKILLS */}
-                <div>
-                  <h3 className="font-semibold text-gray-700 mb-2">Weak Skills</h3>
-                  {result.ai?.weak_skills?.length ? (
-                    <ul className="list-disc ml-6 text-sm text-gray-600 space-y-1">
-                      {result.ai.weak_skills.map((s, i) => (
-                        <li key={i}>{s}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-sm text-green-600">No weak skills found ✅</p>
-                  )}
-                </div>
-
-                {/* GRAMMAR FIXES */}
-                <div>
-                  <h3 className="font-semibold text-gray-700 mb-2">Grammar Fixes</h3>
-                  {result.ai?.grammar_fixes?.length ? (
-                    <ul className="ml-2 space-y-2 text-sm">
-                      {result.ai.grammar_fixes.map((fix, i) => (
-                        <li key={i} className="border rounded-md p-2 bg-white shadow">
-                          <div><b>Before:</b> {fix.before}</div>
-                          <div><b>After:</b> {fix.after}</div>
-                          <div className="text-gray-500"><b>Reason:</b> {fix.reason}</div>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-sm text-green-600">No grammar issues ✅</p>
-                  )}
-                </div>
-
-                {/* ATS WARNINGS */}
-                <div>
-                  <h3 className="font-semibold text-gray-700 mb-2">ATS Warnings</h3>
-                  {result.ai?.ats_warnings?.length ? (
-                    <ul className="list-disc ml-6 text-sm text-red-600 space-y-1">
-                      {result.ai.ats_warnings.map((w, i) => (
-                        <li key={i}>{w}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-sm text-green-600">Perfect ATS formatting ✅</p>
-                  )}
-                </div>
-
-                {/* AI-IMPROVED SUMMARY */}
-                <div>
-                  <h3 className="font-semibold text-gray-700 mb-1">Improved Summary (Short)</h3>
-                  <p className="text-sm text-gray-600 bg-white border rounded-md p-2 shadow">
-                    {result.ai?.summary_improved_short || "—"}
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold text-gray-700 mb-1">Improved Summary (Long)</h3>
-                  <p className="text-sm text-gray-600 bg-white border rounded-md p-2 shadow">
-                    {result.ai?.summary_improved_long || "—"}
-                  </p>
-                </div>
-
-                {/* META INFO */}
-                <div className="pt-2 text-xs text-gray-500">
-                  File: {result.meta?.filename}
-                </div>
-
-              </div>
-            )}
-          </Card>
+          
 
         </div>
 

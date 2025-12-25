@@ -1,8 +1,18 @@
-import Image from "next/image";
-import { CheckCircle } from "lucide-react";
-import Link from "next/link";
+"use client"
+// import Image from "next/image";
+// import { CheckCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+// import Link from "next/link";
 
 export default function Hero() {
+
+
+   const router = useRouter();
+
+  useEffect(() => {
+    router.prefetch("/dashboard");
+  }, [router]);
   return (
     <section className="flex flex-col items-center text-center  px-6">
       <div className="bg-white px-4 py-1 rounded-full text-sm mb-2 ">
@@ -33,9 +43,16 @@ export default function Hero() {
 
       {/* CTA */}
      
-      <button className="mt-10 px-8 py-4 bg-indigo-600 text-white rounded-full text-lg font-semibold shadow-lg hover:bg-[#E9E4F0] hover:text-black transition duration-300">
+      {/* <button className="mt-10 px-8 py-4 bg-indigo-600 text-white rounded-full text-lg font-semibold shadow-lg hover:bg-[#E9E4F0] hover:text-black transition duration-300">
         <Link href="/dashboard"> Get Placed for Free →</Link>
-      </button>
+      </button> */}
+
+        <button
+      onClick={() => router.push("/dashboard")}
+      className="mt-10 px-8 py-4 bg-indigo-600 text-white rounded-full text-lg font-semibold shadow-lg hover:bg-[#E9E4F0] hover:text-black transition duration-300"
+    >
+      Get Placed for Free →
+    </button>
     
 
       {/* Active Users */}

@@ -59,9 +59,9 @@ export default function Footer() {
           </div>
 
           <div className="mt-6 flex items-center gap-4">
-            <div className="bg-white/10 rounded-lg px-4 py-2 text-sm flex items-center gap-2">
+            {/* <div className="bg-white/10 rounded-lg px-4 py-2 text-sm flex items-center gap-2">
               <span className="text-green-400">★</span> Trustpilot
-            </div>
+            </div> */}
             {/* <img
               src="/product-hunt-badge.png"
               alt="Product Hunt"

@@ -1,6 +1,9 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
 import { Onest } from 'next/font/google';
+import Providers from "./providers";
+
+
 
 
 const onest = Onest({
@@ -34,7 +37,9 @@ export default function RootLayout({ children }) {
           rel="stylesheet"
         />
       </head>
-      <body>{children}</body>
+       <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

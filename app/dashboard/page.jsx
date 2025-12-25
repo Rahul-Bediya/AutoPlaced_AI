@@ -3,14 +3,9 @@
 import { motion } from "framer-motion";
 import {
   Upload,
-  Settings,
-  BarChart3,
-  FileText,
-  NotebookPen,
-  Briefcase,
+ 
   Rocket,
-  Menu,
-  X,
+ 
 } from "lucide-react";
 import Sidebar from "../../components/sidebar/sidebar";
 import BreadcrumbNav from "../../components/sidebar/BreadcrumbNav";
